@@ -1,0 +1,31 @@
+{
+  "input": {
+    "article": "Jakarta (ANTARA) - Badan Nasional Penanggulangan Bencana (BNPB) menyatakan sedikitnya 58 unit rumah hunian sementara (huntara) yang dihuni oleh para penyintas banjir bandang di Kabupaten Aceh Utara, Provinsi Aceh, rusak akibat diterjang angin kencang. Angin kencang yang melanda wilayah tersebut berdampak pada 58 kepala keluarga serta mengakibatkan kerusakan pada 58 unit rumah hunian sementara yang masih dalam proses pendataan. Kompleks bangunan huntara yang porak-poranda diterpa angin kencang tersebut pada dasarnya diperuntukkan bagi warga penyintas bencana banjir bandang dan tanah longsor. Dia menjelaskan bahwa peristiwa tersebut terjadi di tengah masa transisi darurat ke pemulihan pascabencana. Direktorat Pusat Pengendalian Operasi (Pusdalops) BNPB melaporkan dampak paling parah terkonsentrasi di Desa Rumoh Rayeuk. Kerusakan juga meluas ke beberapa desa lain. Tim BNPB dan BPBD sudah diterjunkan ke lokasi untuk melakukan asesmen dan koordinasi penanganan."
+  },
+
+  "output": {
+    "summary": "BNPB menyatakan sedikitnya 58 unit rumah hunian sementara di Aceh Utara rusak akibat angin kencang. Dampak ini juga mempengaruhi 58 kepala keluarga di beberapa desa. Tim BNPB dan BPBD telah diterjunkan ke lokasi untuk melakukan asesmen dan penanganan.",
+    
+    "important_sentences": [
+      {
+        "sentence": "BNPB menyatakan sedikitnya 58 unit rumah hunian sementara (huntara) yang dihuni oleh para penyintas banjir bandang di Kabupaten Aceh Utara rusak akibat diterjang angin kencang.",
+        "score": 0.9421
+      },
+      {
+        "sentence": "Angin kencang yang melanda wilayah tersebut berdampak pada 58 kepala keluarga serta mengakibatkan kerusakan pada 58 unit rumah hunian sementara yang masih dalam proses pendataan.",
+        "score": 0.9184
+      },
+      {
+        "sentence": "Tim BNPB dan BPBD sudah diterjunkan ke lokasi untuk melakukan asesmen dan koordinasi penanganan.",
+        "score": 0.8832
+      }
+    ],
+
+    "meta": {
+      "model": "indobert-disaster-summarizer",
+      "task": "extractive_summarization",
+      "language": "id",
+      "threshold": 0.5
+    }
+  }
+}
