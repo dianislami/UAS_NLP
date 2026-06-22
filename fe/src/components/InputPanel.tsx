@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { scrapeKompasArticle } from '../utils/api';
 
 const SAMPLE_TEXT = `Jakarta (ANTARA) - Badan Nasional Penanggulangan Bencana (BNPB) menyatakan sedikitnya 58 unit rumah hunian sementara (huntara) yang dihuni oleh para penyintas banjir bandang di Kabupaten Aceh Utara, Provinsi Aceh, rusak akibat diterjang angin kencang. Angin kencang yang melanda wilayah tersebut berdampak pada 58 kepala keluarga serta mengakibatkan kerusakan pada 58 unit rumah hunian sementara yang masih dalam proses pendataan. Kompleks bangunan huntara yang porak-poranda diterpa angin kencang tersebut pada dasarnya diperuntukkan bagi warga penyintas bencana banjir bandang dan tanah longsor. Dia menjelaskan bahwa peristiwa tersebut terjadi di tengah masa transisi darurat ke pemulihan pascabencana. Direktorat Pusat Pengendalian Operasi (Pusdalops) BNPB melaporkan dampak paling parah terkonsentrasi di Desa Rumoh Rayeuk. Kerusakan juga meluas ke beberapa desa lain. Tim BNPB dan BPBD sudah diterjunkan ke lokasi untuk melakukan asesmen dan koordinasi penanganan.`;
 
@@ -11,7 +12,37 @@ interface InputPanelProps {
 
 export default function InputPanel({ onAnalyze, isLoading, text, setText }: InputPanelProps) {
   const [hovered, setHovered] = useState(false);
-  const isDisabled = !text.trim() || isLoading;
+  const [articleUrl, setArticleUrl] = useState('');
+  const [scrapedTitle, setScrapedTitle] = useState('');
+  const [scrapeError, setScrapeError] = useState('');
+  const [isScraping, setIsScraping] = useState(false);
+  const isDisabled = !text.trim() || isLoading || isScraping;
+  const isScrapeDisabled = !articleUrl.trim() || isLoading || isScraping;
+
+  async function handleScrape() {
+    const url = articleUrl.trim();
+    if (!url) {
+      setScrapeError('Masukkan link artikel Kompas terlebih dahulu.');
+      return;
+    }
+
+    setIsScraping(true);
+    setScrapeError('');
+    setScrapedTitle('');
+    try {
+      const response = await scrapeKompasArticle(url);
+      if (!response.success) {
+        setScrapeError(response.message);
+        return;
+      }
+      setText(response.data.content);
+      setScrapedTitle(response.data.title);
+    } catch (error) {
+      setScrapeError(error instanceof Error ? error.message : 'Artikel gagal diambil.');
+    } finally {
+      setIsScraping(false);
+    }
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -28,6 +59,61 @@ export default function InputPanel({ onAnalyze, isLoading, text, setText }: Inpu
           <i className="ti ti-sparkles text-[11px]" />
           Contoh teks
         </button>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
+          Masukkan link artikel Kompas
+        </label>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input
+            value={articleUrl}
+            onChange={(e) => setArticleUrl(e.target.value)}
+            placeholder="https://regional.kompas.com/read/..."
+            className="w-full rounded-lg px-3 py-2.5 text-sm focus:outline-none transition-all"
+            style={{
+              background: 'var(--bg-input)',
+              border: '1px solid var(--border-md)',
+              color: 'var(--text-primary)',
+            }}
+          />
+          <button
+            onClick={handleScrape}
+            disabled={isScrapeDisabled}
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium active:scale-95 whitespace-nowrap"
+            style={{
+              transition: 'background 0.15s, transform 0.1s, opacity 0.15s',
+              cursor: isScrapeDisabled ? 'not-allowed' : 'pointer',
+              ...(isScrapeDisabled
+                ? { background: 'var(--border)', color: 'var(--text-faint)' }
+                : { background: 'var(--accent)', color: 'var(--accent-text)' }),
+            }}
+          >
+            {isScraping ? (
+              <>
+                <i className="ti ti-loader-2 animate-spin text-sm" />
+                Mengambil...
+              </>
+            ) : (
+              <>
+                <i className="ti ti-download text-sm" />
+                Ambil Artikel
+              </>
+            )}
+          </button>
+        </div>
+        {scrapedTitle && (
+          <div className="flex items-start gap-2 text-xs" style={{ color: 'var(--text-secondary)' }}>
+            <i className="ti ti-check text-sm mt-0.5" style={{ color: 'var(--accent)' }} />
+            <span>{scrapedTitle}</span>
+          </div>
+        )}
+        {scrapeError && (
+          <div className="flex items-start gap-2 text-xs" style={{ color: '#ef4444' }}>
+            <i className="ti ti-alert-circle text-sm mt-0.5" />
+            <span>{scrapeError}</span>
+          </div>
+        )}
       </div>
 
       <div className="relative">
@@ -97,7 +183,7 @@ export default function InputPanel({ onAnalyze, isLoading, text, setText }: Inpu
           <span className="text-xs font-medium" style={{ color: 'var(--text-muted)' }}>Cara kerja model</span>
         </div>
         <p className="text-xs leading-relaxed" style={{ color: 'var(--text-faint)' }}>
-          IndoBERT membaca setiap kalimat dan memberikan skor kepentingan (0-1). Kalimat dengan skor ≥ 0.5 dipilih sebagai ringkasan ekstraktif.
+          IndoBERT membaca setiap kalimat dan memberikan skor kepentingan (0-1). Kalimat dengan skor ≥ 0.8 dipilih sebagai ringkasan ekstraktif.
         </p>
       </div>
     </div>

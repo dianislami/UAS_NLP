@@ -74,7 +74,7 @@ export default function ResultPanel({ result, isLoading, error }: ResultPanelPro
         {[
           { label: 'Kalimat Penting', value: total, icon: 'ti-check' },
           { label: 'Rata-rata Skor', value: `${avgScore}%`, icon: 'ti-chart-line' },
-          { label: 'Threshold', value: '≥ 50%', icon: 'ti-adjustments' },
+          { label: 'Threshold', value: '≥ 80%', icon: 'ti-adjustments' },
         ].map((s) => (
           <div key={s.label} className="rounded-lg p-3" style={{ background: 'var(--bg-input)', border: '1px solid var(--border)' }}>
             <div className="flex items-center gap-1.5 mb-1">

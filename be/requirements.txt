@@ -4,3 +4,7 @@ fastapi
 uvicorn
 nltk
 numpy
+requests
+beautifulsoup4
+lxml
+python-dateutil

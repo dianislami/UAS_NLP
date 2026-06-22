@@ -8,7 +8,7 @@ const STEPS = [
   { icon: 'ti-article', title: 'Input Artikel', desc: 'Teks berita bencana dimasukkan ke sistem' },
   { icon: 'ti-cut', title: 'Sentence Tokenization', desc: 'Artikel dipecah menjadi kalimat-kalimat menggunakan NLTK' },
   { icon: 'ti-brain', title: 'IndoBERT Scoring', desc: 'Setiap kalimat diberi skor kepentingan (0–1) oleh model' },
-  { icon: 'ti-filter', title: 'Threshold Filtering', desc: 'Kalimat dengan skor ≥ 0.5 dipilih sebagai kalimat penting' },
+  { icon: 'ti-filter', title: 'Threshold Filtering', desc: 'Kalimat dengan skor ≥ 0.8 dipilih sebagai kalimat penting' },
   { icon: 'ti-file-text', title: 'Ringkasan', desc: 'Kalimat terpilih digabung menjadi ringkasan ekstraktif' },
 ];
 

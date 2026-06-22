@@ -76,6 +76,10 @@ UAS_NLP/
 │   │
 │   ├── app.py                      # FastAPI app entry point
 │   ├── predict.py                  # Summarization inference logic
+│   ├── scrapers/                   # Scraper artikel berita
+│   │   ├── base.py                 # Base parser reusable
+│   │   └── kompas.py               # Scraper Kompas.com
+│   ├── utils/                      # Helper HTTP, filter domain, teks
 │   ├── sample_input_output.json    # Example input-output testing
 │   ├── requirements.txt            # Python dependencies
 │   ├── README.md                   # Backend documentation
@@ -91,10 +95,10 @@ UAS_NLP/
 
 Sistem ini menggunakan pendekatan **extractive summarization** berbasis transformer:
 
-1. **Input**: teks artikel berita bencana dimasukkan pengguna
+1. **Input**: teks artikel berita bencana dimasukkan pengguna, atau artikel diambil dari link Kompas.com
 2. **Sentence Tokenization**: artikel dipecah menjadi kalimat menggunakan NLTK
 3. **IndoBERT Scoring**: setiap kalimat diberi skor kepentingan (0–1) oleh model
-4. **Threshold Filtering**: kalimat dengan skor ≥ 0.5 dipilih sebagai kalimat penting
+4. **Threshold Filtering**: kalimat dengan skor ≥ 0.8 dipilih sebagai kalimat penting
 5. **Output**: kalimat terpilih digabung menjadi ringkasan terstruktur
 
 **Model:** IndoBERT-base yang di-fine-tune pada dataset berita bencana Indonesia
@@ -165,9 +169,64 @@ npm run dev
 
 Frontend berjalan di: `http://localhost:5173`
 
+### 5. Menggunakan Input Link Kompas
+
+Pada halaman utama, pengguna dapat:
+
+1. Mengisi field **Masukkan link artikel Kompas** dengan URL artikel Kompas.com.
+2. Klik **Ambil Artikel**.
+3. Konten artikel akan otomatis masuk ke textarea artikel berita.
+4. Klik **Ringkas Artikel** untuk menjalankan summarization seperti biasa.
+
+Domain Kompas yang didukung saat ini:
+
+- `www.kompas.com`
+- `regional.kompas.com`
+- `nasional.kompas.com`
+- `megapolitan.kompas.com`
+- `surabaya.kompas.com`
+- `bandung.kompas.com`
+- `medan.kompas.com`
+- `makassar.kompas.com`
+- `lestari.kompas.com`
+
 ---
 
 ## API Endpoint
+
+### `POST /scrape`
+
+Menerima URL artikel Kompas.com dan mengembalikan metadata serta isi artikel.
+
+**Request:**
+```json
+{
+  "url": "https://regional.kompas.com/read/..."
+}
+```
+
+**Response sukses:**
+```json
+{
+  "success": true,
+  "data": {
+    "title": "Judul artikel",
+    "url": "https://regional.kompas.com/read/...",
+    "source": "Kompas.com",
+    "published_date": "2026-06-21T10:00:00+07:00",
+    "author": "Nama penulis",
+    "content": "Isi artikel..."
+  }
+}
+```
+
+**Response gagal jika bukan URL Kompas:**
+```json
+{
+  "success": false,
+  "message": "Saat ini hanya mendukung URL Kompas.com"
+}
+```
 
 ### `POST /summarize`
 

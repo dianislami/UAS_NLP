@@ -1,0 +1,109 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Python cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# =========================
+# Model Files
+# =========================
+be/indobert_disaster_summarizer/model.safetensors
+be/indobert_disaster_summarizer/training_args.bin
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.*
+
+# =========================
+# Node.js
+# =========================
+node_modules/
+
+# Build Output
+dist/
+build/
+
+# Vite
+.vite/
+
+# =========================
+# MacOS
+# =========================
+.DS_Store
+
+# =========================
+# VS Code
+# =========================
+.vscode/
+.history/
+
+# =========================
+# IDE
+# =========================
+.idea/
+
+# =========================
+# Coverage
+# =========================
+.coverage
+htmlcov/
+
+# =========================
+# Temporary files
+# =========================
+*.tmp
+*.temp
+
+# =========================
+# OS files
+# =========================
+Thumbs.db
+
+# =========================
+# Uvicorn
+# =========================
+*.pid
+
+# =========================
+# Torch cache
+# =========================
+.cache/
+torch_cache/
+
+# =========================
+# NLTK data (optional)
+# =========================
+nltk_data/
+
+# =========================
+# React build artifacts
+# =========================
+fe/dist/
+
+# =========================
+# TypeScript
+# =========================
+*.tsbuildinfo   

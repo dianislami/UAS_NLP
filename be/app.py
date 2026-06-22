@@ -1,10 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
-import torch
-from nltk.tokenize import sent_tokenize
 from fastapi.middleware.cors import CORSMiddleware
+
+from predict import summarize_article
+from scrapers.kompas import scrape_kompas_article
+from utils.filters import is_supported_kompas_url
 
 
 app = FastAPI()
@@ -16,51 +17,41 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-MODEL_PATH = "./indobert_disaster_summarizer"
-
-tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH)
-model.eval()
-
-
 class ArticleRequest(BaseModel):
     article: str
 
 
-@app.post("/summarize")
-def summarize(request: ArticleRequest):
+class ScrapeRequest(BaseModel):
+    url: str
 
-    sentences = sent_tokenize(request.article)
 
-    results = []
+@app.post("/scrape")
+def scrape_article(request: ScrapeRequest):
+    if not is_supported_kompas_url(request.url):
+        return {
+            "success": False,
+            "message": "Saat ini hanya mendukung URL Kompas.com"
+        }
 
-    for sentence in sentences:
-
-        inputs = tokenizer(
-            sentence,
-            return_tensors="pt",
-            truncation=True,
-            padding=True,
-            max_length=128
-        )
-
-        with torch.no_grad():
-            outputs = model(**inputs)
-            probs = torch.softmax(outputs.logits, dim=1)
-
-        score = probs[0][1].item()
-
-        results.append({
-            "sentence": sentence,
-            "score": round(score, 4)
-        })
-
-    # ambil yang penting
-    important = [r for r in results if r["score"] >= 0.5]
-
-    summary = " ".join([r["sentence"] for r in important])
+    article = scrape_kompas_article(request.url)
+    if not article:
+        return {
+            "success": False,
+            "message": "Artikel gagal diambil. Pastikan URL Kompas valid dan dapat diakses."
+        }
 
     return {
-        "summary": summary,
-        "important_sentences": important
+        "success": True,
+        "data": article
     }
+
+
+@app.post("/summarize")
+def summarize(request: ArticleRequest):
+    try:
+        return summarize_article(request.article)
+    except OSError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail="Model summarization belum tersedia. Pastikan file model sudah ada di indobert_disaster_summarizer."
+        ) from exc

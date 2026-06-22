@@ -25,7 +25,7 @@
       "model": "indobert-disaster-summarizer",
       "task": "extractive_summarization",
       "language": "id",
-      "threshold": 0.5
+      "threshold": 0.8
     }
   }
 }
