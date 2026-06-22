@@ -78,7 +78,10 @@ UAS_NLP/
 │   ├── predict.py                  # Summarization inference logic
 │   ├── scrapers/                   # Scraper artikel berita
 │   │   ├── base.py                 # Base parser reusable
-│   │   └── kompas.py               # Scraper Kompas.com
+│   │   ├── detik.py                # Scraper Detik.com
+│   │   ├── kompas.py               # Scraper Kompas.com
+│   │   ├── liputan6.py             # Scraper Liputan6.com
+│   │   └── router.py               # Pemilih scraper berdasarkan domain
 │   ├── utils/                      # Helper HTTP, filter domain, teks
 │   ├── sample_input_output.json    # Example input-output testing
 │   ├── requirements.txt            # Python dependencies
@@ -95,7 +98,7 @@ UAS_NLP/
 
 Sistem ini menggunakan pendekatan **extractive summarization** berbasis transformer:
 
-1. **Input**: teks artikel berita bencana dimasukkan pengguna, atau artikel diambil dari link Kompas.com
+1. **Input**: teks artikel berita bencana dimasukkan pengguna, atau artikel diambil dari link Kompas, Liputan6, dan Detik
 2. **Sentence Tokenization**: artikel dipecah menjadi kalimat menggunakan NLTK
 3. **IndoBERT Scoring**: setiap kalimat diberi skor kepentingan (0–1) oleh model
 4. **Threshold Filtering**: kalimat dengan skor ≥ 0.8 dipilih sebagai kalimat penting
@@ -169,16 +172,16 @@ npm run dev
 
 Frontend berjalan di: `http://localhost:5173`
 
-### 5. Menggunakan Input Link Kompas
+### 5. Menggunakan Input Link Berita
 
 Pada halaman utama, pengguna dapat:
 
-1. Mengisi field **Masukkan link artikel Kompas** dengan URL artikel Kompas.com.
+1. Mengisi field **Masukkan link artikel berita** dengan URL artikel Kompas, Liputan6, atau Detik.
 2. Klik **Ambil Artikel**.
 3. Konten artikel akan otomatis masuk ke textarea artikel berita.
 4. Klik **Ringkas Artikel** untuk menjalankan summarization seperti biasa.
 
-Domain Kompas yang didukung saat ini:
+Domain yang didukung saat ini:
 
 - `www.kompas.com`
 - `regional.kompas.com`
@@ -189,6 +192,11 @@ Domain Kompas yang didukung saat ini:
 - `medan.kompas.com`
 - `makassar.kompas.com`
 - `lestari.kompas.com`
+- `www.liputan6.com`
+- `m.liputan6.com`
+- `www.detik.com`
+- `detik.com`
+- `news.detik.com`
 
 ---
 
@@ -196,7 +204,7 @@ Domain Kompas yang didukung saat ini:
 
 ### `POST /scrape`
 
-Menerima URL artikel Kompas.com dan mengembalikan metadata serta isi artikel.
+Menerima URL artikel Kompas, Liputan6, atau Detik dan mengembalikan metadata serta isi artikel.
 
 **Request:**
 ```json
@@ -220,11 +228,11 @@ Menerima URL artikel Kompas.com dan mengembalikan metadata serta isi artikel.
 }
 ```
 
-**Response gagal jika bukan URL Kompas:**
+**Response gagal jika domain belum didukung:**
 ```json
 {
   "success": false,
-  "message": "Saat ini hanya mendukung URL Kompas.com"
+  "message": "Saat ini hanya mendukung Kompas, Liputan6, dan Detik."
 }
 ```
 

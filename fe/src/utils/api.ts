@@ -19,7 +19,7 @@ export async function summarizeArticle(article: string): Promise<SummarizeRespon
   return res.json() as Promise<SummarizeResponse>;
 }
 
-export async function scrapeKompasArticle(url: string): Promise<ScrapeResponse> {
+export async function scrapeArticle(url: string): Promise<ScrapeResponse> {
   const res = await fetch(`${BASE_URL}/scrape`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

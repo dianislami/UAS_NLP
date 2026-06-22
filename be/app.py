@@ -4,8 +4,7 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
 from predict import summarize_article
-from scrapers.kompas import scrape_kompas_article
-from utils.filters import is_supported_kompas_url
+from scrapers.router import get_scraper_for_url
 
 
 app = FastAPI()
@@ -27,17 +26,18 @@ class ScrapeRequest(BaseModel):
 
 @app.post("/scrape")
 def scrape_article(request: ScrapeRequest):
-    if not is_supported_kompas_url(request.url):
+    scraper = get_scraper_for_url(request.url)
+    if not scraper:
         return {
             "success": False,
-            "message": "Saat ini hanya mendukung URL Kompas.com"
+            "message": "Saat ini hanya mendukung Kompas, Liputan6, dan Detik."
         }
 
-    article = scrape_kompas_article(request.url)
+    article = scraper.parse_article(request.url)
     if not article:
         return {
             "success": False,
-            "message": "Artikel gagal diambil. Pastikan URL Kompas valid dan dapat diakses."
+            "message": "Artikel gagal diambil. Pastikan URL valid dan dapat diakses."
         }
 
     return {
