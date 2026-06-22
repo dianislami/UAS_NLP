@@ -29,7 +29,7 @@ export default function Navbar({ currentPage, onNavigate }: NavbarProps) {
             <i className="ti ti-radar text-sm" style={{ color: 'var(--accent)' }} />
           </div>
           <span className="font-semibold text-sm tracking-tight" style={{ color: 'var(--text-primary)' }}>
-            Disaster<span style={{ color: 'var(--accent)' }}>NER</span>
+            Disaster<span style={{ color: 'var(--accent)' }}>SUM</span>
           </span>
         </button>
 
